@@ -1,60 +1,59 @@
 import React from "react";
 import { render, fireEvent, screen } from "@testing-library/react";
-import "@testing-library/jest-dom"; // For better DOM assertions
-import TodoList from "../components/TodoList"; // Adjust the path if necessary
+import "@testing-library/jest-dom"; // Provides additional matchers
+import TodoList from "../components/TodoList"; // Adjust the path based on your project structure
 
-test("renders TodoList component with initial elements", () => {
-  render(<TodoList />);
-  expect(screen.getByText(/todo list/i)).toBeInTheDocument();
-  expect(screen.getByPlaceholderText(/add a todo/i)).toBeInTheDocument();
-});
+describe("TodoList Component", () => {
+  test("renders TodoList component correctly", () => {
+    render(<TodoList />);
+    // Check for main elements
+    expect(screen.getByText(/todo list/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/add a todo/i)).toBeInTheDocument();
+  });
 
-test("allows adding a new todo", () => {
-  render(<TodoList />);
+  test("allows adding a new todo", () => {
+    render(<TodoList />);
+    const input = screen.getByPlaceholderText(/add a todo/i);
+    const addButton = screen.getByText(/add/i);
 
-  const input = screen.getByPlaceholderText(/add a todo/i);
-  const addButton = screen.getByText(/add/i);
+    // Simulate adding a todo
+    fireEvent.change(input, { target: { value: "New Todo" } });
+    fireEvent.click(addButton);
 
-  // Add a new todo
-  fireEvent.change(input, { target: { value: "New Todo" } });
-  fireEvent.click(addButton);
+    // Verify the new todo is added
+    expect(screen.getByText("New Todo")).toBeInTheDocument();
+  });
 
-  // Check if the new todo is in the document
-  expect(screen.getByText("New Todo")).toBeInTheDocument();
-});
+  test("allows toggling the completion status of a todo", () => {
+    render(<TodoList />);
+    const input = screen.getByPlaceholderText(/add a todo/i);
+    const addButton = screen.getByText(/add/i);
 
-test("allows toggling the completion of a todo", () => {
-  render(<TodoList />);
+    // Add a new todo
+    fireEvent.change(input, { target: { value: "Complete me" } });
+    fireEvent.click(addButton);
 
-  const input = screen.getByPlaceholderText(/add a todo/i);
-  const addButton = screen.getByText(/add/i);
+    // Toggle completion status
+    const todoItem = screen.getByText("Complete me");
+    fireEvent.click(todoItem);
 
-  // Add a new todo
-  fireEvent.change(input, { target: { value: "Complete me" } });
-  fireEvent.click(addButton);
+    // Verify the style change (e.g., line-through for completed todos)
+    expect(todoItem).toHaveStyle("text-decoration: line-through");
+  });
 
-  // Toggle the todo
-  const todoItem = screen.getByText("Complete me");
-  fireEvent.click(todoItem);
+  test("allows deleting a todo", () => {
+    render(<TodoList />);
+    const input = screen.getByPlaceholderText(/add a todo/i);
+    const addButton = screen.getByText(/add/i);
 
-  // Verify that it is marked as completed (line-through style)
-  expect(todoItem).toHaveStyle("text-decoration: line-through");
-});
+    // Add a todo and delete it
+    fireEvent.change(input, { target: { value: "Delete me" } });
+    fireEvent.click(addButton);
 
-test("allows deleting a todo", () => {
-  render(<TodoList />);
+    const deleteButton = screen.getByText(/delete/i);
+    fireEvent.click(deleteButton);
 
-  const input = screen.getByPlaceholderText(/add a todo/i);
-  const addButton = screen.getByText(/add/i);
-
-  // Add a new todo
-  fireEvent.change(input, { target: { value: "Delete me" } });
-  fireEvent.click(addButton);
-
-  // Delete the todo
-  const deleteButton = screen.getByText(/delete/i);
-  fireEvent.click(deleteButton);
-
-  // Verify that the todo is no longer in the document
-  expect(screen.queryByText("Delete me")).not.toBeInTheDocument();
+    // Verify the todo is deleted
+    expect(screen.queryByText("Delete me")).not.toBeInTheDocument();
+  });
 });
