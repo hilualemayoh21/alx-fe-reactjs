@@ -1,0 +1,38 @@
+.formWarpper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5em;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.textInput {
+  /* Styles for text input fields */
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.emailInput {
+  /* Styles for email input fields */
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.channelInput {
+  /* Styles for channel input fields */
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+}
+.errors {
+  color: red;
+  font-size: 14px;
+}
+.formcontrol {
+  margin-bottom: 2em;
+}
