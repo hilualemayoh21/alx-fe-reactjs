@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,14 +10,13 @@ import Home from "./components/Home";
 import Profile from "./components/Profile";
 import Login from "./components/Login";
 import NotFound from "./components/NotFound";
-import BlogPost from "./components/BlogPost"; // Import the BlogPost component
-
-function ProtectedRoute({ children }) {
-  const isAuthenticated = localStorage.getItem("authToken"); // Simulated authentication
-  return isAuthenticated ? children : <Navigate to="/login" />;
-}
+import BlogPost from "./components/BlogPost";
+import UserProfile from "./components/UserProfile"; // Assuming you have this component
+import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute component
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   return (
     <Router>
       <nav>
@@ -27,26 +26,28 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+
+        {/* Protected Route - Accessible only when authenticated */}
         <Route
-          path="/profile/*"
+          path="/profile"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
               <Profile />
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<NotFound />} />
+
+        {/* Dynamic Route for User Profile */}
         <Route path="/user/:userId" element={<UserProfile />} />
+
+        {/* Dynamic Route for BlogPost */}
         <Route path="/blog/:id" element={<BlogPost />} />
+
+        {/* Catch-all Route for 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
-}
-
-// ProtectedRoute Component
-function ProtectedRoute({ children }) {
-  const isAuthenticated = localStorage.getItem("authToken"); // Simulated authentication
-  return isAuthenticated ? children : <Navigate to="/login" />;
 }
 
 export default App;
