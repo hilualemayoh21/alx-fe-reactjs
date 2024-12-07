@@ -1,54 +1,41 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-function HomePage() {
+import axios from "axios";
+
+const HomePage = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-
+  const url = "http://localhost:5000/recipes";
   useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/recipes");
-        if (!response.ok) {
-          throw new Error("HTTP request error");
-        }
-        const data = await response.json();
-        setData(data);
+    axios
+      .get(url)
+      .then((res) => {
+        setData(res.data);
         setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
+      })
+      .catch((error) => {
         setError(error.message);
-      }
-    };
-
-    fetchRecipe();
+        setIsLoading(false);
+      });
   }, []);
 
-  if (error) {
-    return <h2>{error}</h2>; // Ensure the error condition returns JSX.
-  }
-
   if (isLoading) {
-    return <h2>Loading ...</h2>; // Ensure the loading state also returns JSX.
+    return <h2>loading</h2>;
   }
-
+  if (error) {
+    return <h2>error</h2>;
+  }
   return (
-    <div className="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-2 gap-4">
-      {data.map((recipe) => (
-        <Link key={recipe.id} to={`/recipedetails/${recipe.id}`}>
-          <div className="shadow-md">
-            <img
-              src={recipe.image}
-              alt=""
-              className="w-full object-contain md:hover:scale-105"
-            />
-            <h2 className="font-bold text-lg mx-auto">{recipe.title}</h2>
-            <p className="p-4">{recipe.summary}</p>
-          </div>
-        </Link>
+    <div>
+      {data.map((category) => (
+        <div key={category.id}>
+          <h3>{category.title}</h3>
+          <p>{category.summary}</p>
+          <img src={category.image}></img>
+        </div>
       ))}
     </div>
   );
-}
+};
 
 export default HomePage;
