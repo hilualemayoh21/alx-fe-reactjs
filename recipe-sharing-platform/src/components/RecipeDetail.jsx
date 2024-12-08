@@ -1,28 +1,29 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
 
 const RecipeDetail = () => {
-  const { id } = useParams(); // Get the recipe ID from the URL
+  const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const url = `http://localhost:5000/recipes/${id}`; // Replace with your API endpoint
-
   useEffect(() => {
-    const fetchRecipe = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(url);
-        setRecipe(response.data);
+        const data = await import("../data.json");
+        const recipeDetail = data.recipes.find(
+          (recipe) => recipe.id === parseInt(id)
+        );
+        if (!recipeDetail) throw new Error("Recipe not found");
+        setRecipe(recipeDetail);
         setIsLoading(false);
       } catch (err) {
-        setError("Failed to fetch recipe. Please try again later.");
+        setError(err.message);
         setIsLoading(false);
       }
     };
 
-    fetchRecipe();
+    fetchData();
   }, [id]);
 
   if (isLoading) {
@@ -31,10 +32,6 @@ const RecipeDetail = () => {
 
   if (error) {
     return <h2 className="text-center text-xl mt-10 text-red-500">{error}</h2>;
-  }
-
-  if (!recipe) {
-    return <h2 className="text-center text-xl mt-10">Recipe not found</h2>;
   }
 
   return (
