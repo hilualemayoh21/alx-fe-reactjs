@@ -1,4 +1,3 @@
-// src/components/AddRecipeForm.jsx
 import { useState } from "react";
 
 const AddRecipeForm = () => {
@@ -7,26 +6,57 @@ const AddRecipeForm = () => {
   const [steps, setSteps] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [errors, setErrors] = useState({
+    title: "",
+    ingredients: "",
+    steps: "",
+  });
+
+  // Form validation
+  const validate = () => {
+    let isValid = true;
+    let errors = {};
+
+    if (!title) {
+      errors.title = "Title is required";
+      isValid = false;
+    }
+
+    if (!ingredients) {
+      errors.ingredients = "Ingredients are required";
+      isValid = false;
+    } else if (ingredients.split("\n").length < 2) {
+      errors.ingredients = "Please list at least two ingredients";
+      isValid = false;
+    }
+
+    if (!steps) {
+      errors.steps = "Preparation steps are required";
+      isValid = false;
+    }
+
+    setErrors(errors);
+    return isValid;
+  };
 
   // Form submit handler
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Front-end validation
-    if (!title || !ingredients || !steps) {
-      setError("All fields are required.");
+    // Validate form before submitting
+    if (validate()) {
+      // Simulate successful submission
+      setSuccess("Recipe added successfully!");
+      setError("");
+      setErrors({}); // Clear error messages
+
+      // Reset the form
+      setTitle("");
+      setIngredients("");
+      setSteps("");
+    } else {
       setSuccess("");
-      return;
     }
-
-    // Simulate successful submission
-    setSuccess("Recipe added successfully!");
-    setError("");
-
-    // Reset the form
-    setTitle("");
-    setIngredients("");
-    setSteps("");
   };
 
   return (
@@ -54,9 +84,14 @@ const AddRecipeForm = () => {
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`mt-1 block w-full px-3 py-2 border ${
+              errors.title ? "border-red-500" : "border-gray-300"
+            } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Enter recipe title"
           />
+          {errors.title && (
+            <p className="text-red-500 text-xs">{errors.title}</p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -71,9 +106,14 @@ const AddRecipeForm = () => {
             value={ingredients}
             onChange={(e) => setIngredients(e.target.value)}
             rows="4"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`mt-1 block w-full px-3 py-2 border ${
+              errors.ingredients ? "border-red-500" : "border-gray-300"
+            } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="List ingredients"
           ></textarea>
+          {errors.ingredients && (
+            <p className="text-red-500 text-xs">{errors.ingredients}</p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -88,9 +128,14 @@ const AddRecipeForm = () => {
             value={steps}
             onChange={(e) => setSteps(e.target.value)}
             rows="4"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`mt-1 block w-full px-3 py-2 border ${
+              errors.steps ? "border-red-500" : "border-gray-300"
+            } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Write the preparation steps"
           ></textarea>
+          {errors.steps && (
+            <p className="text-red-500 text-xs">{errors.steps}</p>
+          )}
         </div>
 
         <button
