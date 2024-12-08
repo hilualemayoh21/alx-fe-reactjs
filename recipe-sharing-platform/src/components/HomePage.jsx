@@ -10,10 +10,11 @@ const HomePage = () => {
     axios
       .get(url)
       .then((res) => {
-        setData(res.data);
+        setData(res.data.recipes);
         setIsLoading(false);
       })
       .catch((error) => {
+        console.error(error); //
         setError(error.message);
         setIsLoading(false);
       });
