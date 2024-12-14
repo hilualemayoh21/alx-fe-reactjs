@@ -5,6 +5,10 @@ function Search() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setUser("");
+  };
   const handleUserSearch = async () => {
     try {
       setIsLoading(true);
@@ -26,18 +30,20 @@ function Search() {
   return (
     <div>
       <div className=" text-center m-10">
-        <input
-          type="text"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
-          className=" w-60 bg-slate-50 outline-none rounded-lg p-2"
-        />
-        <button
-          onClick={handleUserSearch}
-          className=" ml-4 bg-slate-700  rounded-sm px-4"
-        >
-          Search
-        </button>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            className=" w-60 bg-slate-50 outline-none rounded-lg p-2"
+          />
+          <button
+            onClick={handleUserSearch}
+            className=" ml-4 bg-slate-700  rounded-sm px-4"
+          >
+            Search
+          </button>
+        </form>
       </div>
       {error && <p className="text-red">{error}</p>}
       {user && (
