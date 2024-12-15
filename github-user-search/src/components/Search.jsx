@@ -52,15 +52,14 @@ function Search() {
         minRepos: minRepos.trim() || "",
         page: nextPage,
       });
-            if (results.length === 0) {
-        setError("Looks like we can't find the user");
+
       console.log("More results:", results); // Log additional results for debugging
       setUsers((prevUsers) => [...prevUsers, ...results]);
       setPage(nextPage);
       setIsLoading(false);
     } catch (err) {
       console.error("Error loading more users:", err); // Log the error for debugging
-      setError("Failed to load more users.");
+      setError("Looks like we cant find the user");
       setIsLoading(false);
     }
   };
@@ -107,8 +106,12 @@ function Search() {
 
       {/* Results Section */}
       {isLoading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-      {users.length > 0 && (
+      {error && (
+        <p className="text-red-500">
+          "Looks like we cant find the user"{error}
+        </p>
+      )}
+      {users.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {users.map((user) => (
             <div
@@ -135,6 +138,8 @@ function Search() {
             </div>
           ))}
         </div>
+      ) : (
+        <p>Looks like we cant find the user</p>
       )}
 
       {/* Load More Button */}
