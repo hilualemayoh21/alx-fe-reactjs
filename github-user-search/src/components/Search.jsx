@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import fetchAdvancedUserData from "../services/githubService";
+import fetchUserData from "../services/githubService";
 
 function Search() {
   const [userName, setUserName] = useState("");
@@ -24,7 +24,7 @@ function Search() {
       }); // Debugging log to check input values
 
       // Try with reduced filters for testing
-      const results = await fetchAdvancedUserData({
+      const results = await fetchUserData({
         userName: userName.trim() || "", // Allow empty search for username
         location: location.trim(),
         minRepos: minRepos.trim() || "", // Allow empty minRepos for testing
@@ -46,7 +46,7 @@ function Search() {
       const nextPage = page + 1;
       console.log("Loading next page:", nextPage); // Debugging log for pagination
 
-      const results = await fetchAdvancedUserData({
+      const results = await fetchUserData({
         userName: userName.trim() || "",
         location: location.trim(),
         minRepos: minRepos.trim() || "",
@@ -63,41 +63,45 @@ function Search() {
       setIsLoading(false);
     }
   };
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Search Form */}
       <div className="bg-white shadow-md p-4 rounded-lg mb-6">
         <h2 className="text-2xl font-bold mb-4">GitHub User Search</h2>
-        <div className="flex flex-col sm:flex-row gap-4 mb-4">
-          <input
-            type="text"
-            placeholder="Username"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            className="flex-1 p-2 border rounded"
-          />
-          <input
-            type="text"
-            placeholder="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="flex-1 p-2 border rounded"
-          />
-          <input
-            type="number"
-            placeholder="Min Repositories"
-            value={minRepos}
-            onChange={(e) => setMinRepos(e.target.value)}
-            className="flex-1 p-2 border rounded"
-          />
-        </div>
-        <button
-          onClick={handleSearch}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Search
-        </button>
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col sm:flex-row gap-4 mb-4">
+            <input
+              type="text"
+              placeholder="Username"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              className="flex-1 p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="flex-1 p-2 border rounded"
+            />
+            <input
+              type="number"
+              placeholder="Min Repositories"
+              value={minRepos}
+              onChange={(e) => setMinRepos(e.target.value)}
+              className="flex-1 p-2 border rounded"
+            />
+          </div>
+          <button
+            onClick={handleSearch}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Search
+          </button>
+        </form>
       </div>
 
       {/* Results Section */}

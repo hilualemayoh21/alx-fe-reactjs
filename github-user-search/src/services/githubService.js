@@ -4,12 +4,7 @@ import axios from "axios";
 const BASE_URL = "https://api.github.com/search/users";
 
 // Fetch GitHub user data with advanced search criteria
-const fetchAdvancedUserData = async ({
-  userName,
-  location,
-  minRepos,
-  page = 1,
-}) => {
+const fetchUserData = async ({ userName, location, minRepos, page = 1 }) => {
   // Construct the query
   const query = [
     userName && `in:login ${userName}`,
@@ -19,7 +14,7 @@ const fetchAdvancedUserData = async ({
     .filter(Boolean)
     .join(" ");
 
-  const url = `${BASE_URL}?q=${encodeURIComponent(
+  const url = `https://api.github.com/search/users?q=${encodeURIComponent(
     query
   )}&per_page=10&page=${page}`;
 
@@ -43,4 +38,4 @@ const fetchAdvancedUserData = async ({
   }
 };
 
-export default fetchAdvancedUserData;
+export default fetchUserData;
