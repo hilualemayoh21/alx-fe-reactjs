@@ -52,7 +52,8 @@ function Search() {
         minRepos: minRepos.trim() || "",
         page: nextPage,
       });
-
+            if (results.length === 0) {
+        setError("Looks like we can't find the user");
       console.log("More results:", results); // Log additional results for debugging
       setUsers((prevUsers) => [...prevUsers, ...results]);
       setPage(nextPage);
