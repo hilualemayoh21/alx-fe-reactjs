@@ -19,8 +19,7 @@ function Search() {
 
       const results = await fetchUserData({ userName, location, minRepos });
       setUsers(results);
-      if (results.length === 0)
-        setError("No users found based on the criteria.");
+      if (results.length === 0) setError("Looks like we cant find the user");
       setIsLoading(false);
     } catch (err) {
       setError("Failed to fetch users. Please try again.");
@@ -46,41 +45,45 @@ function Search() {
       setIsLoading(false);
     }
   };
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Search Form */}
       <div className="bg-white shadow-md p-4 rounded-lg mb-6">
         <h2 className="text-2xl font-bold mb-4">GitHub User Search</h2>
-        <div className="flex flex-col sm:flex-row gap-4 mb-4">
-          <input
-            type="text"
-            placeholder="Username"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            className="flex-1 p-2 border rounded"
-          />
-          <input
-            type="text"
-            placeholder="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="flex-1 p-2 border rounded"
-          />
-          <input
-            type="number"
-            placeholder="Min Repositories"
-            value={minRepos}
-            onChange={(e) => setMinRepos(e.target.value)}
-            className="flex-1 p-2 border rounded"
-          />
-        </div>
-        <button
-          onClick={handleSearch}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Search
-        </button>
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col sm:flex-row gap-4 mb-4">
+            <input
+              type="text"
+              placeholder="Username"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              className="flex-1 p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="flex-1 p-2 border rounded"
+            />
+            <input
+              type="number"
+              placeholder="Min Repositories"
+              value={minRepos}
+              onChange={(e) => setMinRepos(e.target.value)}
+              className="flex-1 p-2 border rounded"
+            />
+          </div>
+          <button
+            onClick={handleSearch}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Search
+          </button>
+        </form>
       </div>
 
       {/* Results Section */}
@@ -91,7 +94,7 @@ function Search() {
         !isLoading &&
         users.length === 0 && <p>No users found based on the criteria.</p>
       )}
-      {users.length > 0 && (
+      {users.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {users.map((user) => (
             <div
@@ -118,6 +121,8 @@ function Search() {
             </div>
           ))}
         </div>
+      ) : (
+        <p>Looks like we cant find the user</p>
       )}
 
       {/* Load More Button */}

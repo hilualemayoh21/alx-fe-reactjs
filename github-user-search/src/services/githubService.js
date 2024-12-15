@@ -11,7 +11,7 @@ const fetchUserData = async ({ userName, location, minRepos, page = 1 }) => {
     .filter(Boolean)
     .join(" ");
 
-  const url = `${BASE_URL}?q=${encodeURIComponent(
+  const url = `https://api.github.com/search/users?q=${encodeURIComponent(
     query
   )}&per_page=10&page=${page}`;
 
