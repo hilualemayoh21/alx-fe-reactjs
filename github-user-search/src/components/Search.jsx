@@ -17,12 +17,6 @@ function Search() {
       setUsers([]);
       setPage(1); // Reset to the first page
 
-      console.log("Search criteria:", {
-        userName: userName.trim(),
-        location: location.trim(),
-        minRepos: minRepos.trim(),
-      }); // Debugging log to check input values
-
       // Try with reduced filters for testing
       const results = await fetchUserData({
         userName: userName.trim() || "", // Allow empty search for username
@@ -30,11 +24,10 @@ function Search() {
         minRepos: minRepos.trim() || "", // Allow empty minRepos for testing
       });
 
-      console.log("Search results:", results); // Log the search results for debugging
       setUsers(results);
       setIsLoading(false);
     } catch (err) {
-      console.error("Error during search:", err); // Log the error for debugging
+      // console.error("Error during search:", err); // Log the error for debugging
       setError("Failed to fetch users. Please try again.");
       setIsLoading(false);
     }
@@ -44,8 +37,6 @@ function Search() {
     try {
       setIsLoading(true);
       const nextPage = page + 1;
-      console.log("Loading next page:", nextPage); // Debugging log for pagination
-
       const results = await fetchUserData({
         userName: userName.trim() || "",
         location: location.trim(),
@@ -53,12 +44,11 @@ function Search() {
         page: nextPage,
       });
 
-      console.log("More results:", results); // Log additional results for debugging
       setUsers((prevUsers) => [...prevUsers, ...results]);
       setPage(nextPage);
       setIsLoading(false);
     } catch (err) {
-      console.error("Error loading more users:", err); // Log the error for debugging
+      //console.error("Error loading more users:", err); // Log the error for debugging
       setError("Looks like we cant find the user");
       setIsLoading(false);
     }
