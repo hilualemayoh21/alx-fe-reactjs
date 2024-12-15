@@ -4,16 +4,16 @@ function Layout({ children }) {
   return (
     <div>
       <header>
-        <nav className=" flex p-6 gap-7 text-slate-800 bg-slate-200 items-center justify-start  ">
-          <Link to="/" className="ml-40">
-            Home
-          </Link>
+        <nav className="flex bg-slate-500 pl-60 py-4 gap-6 font-bold text-lg text-slate-300">
+          <Link to="/">Home</Link>
           <Link to="/search">Search</Link>
         </nav>
       </header>
       <main>{children}</main>
-      <footer className="absolute bottom-0 text-slate-500 text-center p-10 bg-slate-800 w-full">
-        <p>&copy; guthub usersearsh app 2024</p>
+      <footer className="absolute bottom-0  bg-slate-700 w-full p-6 ">
+        <p className="text-center text-slate-300">
+          &copy; GitHub User Search App
+        </p>
       </footer>
     </div>
   );

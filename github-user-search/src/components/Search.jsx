@@ -1,68 +1,145 @@
 import React, { useState } from "react";
-import fetchUserData from "../services/githubService";
+import fetchAdvancedUserData from "../services/githubService";
+
 function Search() {
   const [userName, setUserName] = useState("");
-  const [user, setUser] = useState(null);
+  const [location, setLocation] = useState("");
+  const [minRepos, setMinRepos] = useState("");
+  const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setUser("");
-  };
-  const handleUserSearch = async () => {
+  const [page, setPage] = useState(1);
+
+  const handleSearch = async () => {
     try {
       setIsLoading(true);
       setError("");
-      setUser(null);
-      const data = await fetchUserData(userName.trim());
-      setUser(data);
+      setUsers([]);
+      setPage(1); // Reset to the first page
+
+      console.log("Search criteria:", {
+        userName: userName.trim(),
+        location: location.trim(),
+        minRepos: minRepos.trim(),
+      }); // Debugging log to check input values
+
+      // Try with reduced filters for testing
+      const results = await fetchAdvancedUserData({
+        userName: userName.trim() || "", // Allow empty search for username
+        location: location.trim(),
+        minRepos: minRepos.trim() || "", // Allow empty minRepos for testing
+      });
+
+      console.log("Search results:", results); // Log the search results for debugging
+      setUsers(results);
       setIsLoading(false);
-    } catch (error) {
-      setError("Looks like we cant find the user");
-      console.error("canot fetch the user data", error);
-      setUser(null);
+    } catch (err) {
+      console.error("Error during search:", err); // Log the error for debugging
+      setError("Failed to fetch users. Please try again.");
       setIsLoading(false);
     }
   };
-  if (isLoading) {
-    return <h3>loading ...</h3>;
-  }
+
+  const loadMore = async () => {
+    try {
+      setIsLoading(true);
+      const nextPage = page + 1;
+      console.log("Loading next page:", nextPage); // Debugging log for pagination
+
+      const results = await fetchAdvancedUserData({
+        userName: userName.trim() || "",
+        location: location.trim(),
+        minRepos: minRepos.trim() || "",
+        page: nextPage,
+      });
+
+      console.log("More results:", results); // Log additional results for debugging
+      setUsers((prevUsers) => [...prevUsers, ...results]);
+      setPage(nextPage);
+      setIsLoading(false);
+    } catch (err) {
+      console.error("Error loading more users:", err); // Log the error for debugging
+      setError("Failed to load more users.");
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div>
-      <div className=" text-center m-10">
-        <form onSubmit={handleSubmit}>
+    <div className="p-6 max-w-4xl mx-auto">
+      {/* Search Form */}
+      <div className="bg-white shadow-md p-4 rounded-lg mb-6">
+        <h2 className="text-2xl font-bold mb-4">GitHub User Search</h2>
+        <div className="flex flex-col sm:flex-row gap-4 mb-4">
           <input
             type="text"
+            placeholder="Username"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
-            className=" w-60 bg-slate-50 outline-none rounded-lg p-2"
+            className="flex-1 p-2 border rounded"
           />
-          <button
-            onClick={handleUserSearch}
-            className=" ml-4 bg-slate-700  rounded-sm px-4"
-          >
-            Search
-          </button>
-        </form>
-      </div>
-      {error && <p className="text-red">{error}</p>}
-      {user && (
-        <div className="mt-40   mb-30 flex flex-col gap-3 justify-center items-center max-w-xl sm:max-w-md mx-auto bg-white shadow-lg shadow-gray-500/50 rounded-lg p-4border border-gray-300">
-          <img
-            src={user.avatar_url}
-            alt={`${user.login} avater's`}
-            className="rounded-full w-10 h-10 my-3 block"
+          <input
+            type="text"
+            placeholder="Location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="flex-1 p-2 border rounded"
           />
-          <h2>{user.name || "No user Name"}</h2>
-          <a
-            href={user.html_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className=" text-slate-600 mb-4 no-underline block"
-          >
-            View GitHub Profile
-          </a>
+          <input
+            type="number"
+            placeholder="Min Repositories"
+            value={minRepos}
+            onChange={(e) => setMinRepos(e.target.value)}
+            className="flex-1 p-2 border rounded"
+          />
         </div>
+        <button
+          onClick={handleSearch}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Search
+        </button>
+      </div>
+
+      {/* Results Section */}
+      {isLoading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+      {users.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {users.map((user) => (
+            <div
+              key={user.id}
+              className="bg-white shadow-md rounded-lg p-4 flex items-center"
+            >
+              <img
+                src={user.avatar_url}
+                alt={user.login}
+                className="w-16 h-16 rounded-full mr-4"
+              />
+              <div>
+                <h3 className="text-lg font-bold">{user.login}</h3>
+                <p>📦 {user.public_repos || "N/A"} Repositories</p>
+                <a
+                  href={user.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
+                >
+                  View Profile
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Load More Button */}
+      {users.length > 0 && (
+        <button
+          onClick={loadMore}
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded mt-6 hover:bg-gray-400"
+        >
+          Load More
+        </button>
       )}
     </div>
   );
